@@ -1,5 +1,4 @@
 import gzip
-import boto3
 import pandas
 import os
 import re
@@ -115,5 +114,5 @@ def pixelExtraction(pixel):
 
 if __name__ == '__main__':
     print('Starting parallelisation')
-    pool = multiprocessing.Pool(15)
+    pool = multiprocessing.Pool(4)
     pool.map(pixelExtraction, config.pixel_list_A)
