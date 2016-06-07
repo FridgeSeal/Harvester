@@ -6,33 +6,34 @@ import multiprocessing
 #import logging
 import config
 
-#logging.basicConfig(level = logging.info)
-# TODO replace print statements with proper logging
-print('Library import complete')
-print('Connecting to S3...')
-session = boto3.Session(profile_name='am')
-print('Connection to S3 complete')
-print('Acquiring bucket...')
-resource = boto3.resource('s3')
-PixelBucket = resource.Bucket(config.Bucket)
-print('Bucket acquired')
-columns = ['OpID', 'Pixel', 'Country', 'OS']
+# #logging.basicConfig(level = logging.info)
+# # TODO replace print statements with proper logging
+# print('Library import complete')
+# print('Connecting to S3...')
+# session = boto3.Session(profile_name='am')
+# print('Connection to S3 complete')
+# print('Acquiring bucket...')
+# resource = boto3.resource('s3')
+# PixelBucket = resource.Bucket(config.Bucket)
+# print('Bucket acquired')
+# columns = ['OpID', 'Pixel', 'Country', 'OS']
 
 
-def namer(pixel, counter, extension):
-    name = pixel + str(counter) + extension
+def namer(pixel, extension):
+    name = pixel + extension
     return name
 
+def join_dir(pixel):
+    filepath = 'C\\Users\\tom.watson\\PycharmProjects\\AWS Sync\\' + pixel
+    return filepath
 
-def getObjects(pixel):
-    i = 0
-    binaryData = []
-    s3Filter = config.Filter + pixel
-    for obj in PixelBucket.objects.filter(Prefix=s3Filter):
-        binaryData.append(obj.key)
-        downloadTar(binaryData[i], i, pixel)
-        i += 1
-    return i - 1
+
+def walk_directory(pixel):
+    rootdir = join_dir(pixel)
+    for subdir, dirs, files in os.walk(rootdir):
+        for file in files:
+            if file.endswith('.gz'):
+                processGZ(file)
 
 
 def downloadTar(key, counter, pixel):  # Download specified object from S3
@@ -46,18 +47,17 @@ def removeFile(fileName):  # remove file once we've finished with it
     print('Removed file ' + repr(fileName))
 
 
-def processGZ(maximum, pixel):  # Expand tar.gz file
-    for i in range(maximum + 1):
-        archiveName = namer(pixel, i, '.gz')
-        csvName = namer(pixel, i, '.csv')
-        inFile = gzip.open(archiveName, 'rb')
-        outFile = open(csvName, 'wb')
-        outFile.write(inFile.read())
-        inFile.close()
-        outFile.close()
-        removeFile(archiveName)
+def processGZ(filename):  # Expand tar.gz file
+    archiveName = namer(pixel, '.gz')
+    csvName = namer(pixel, '.csv')
+    inFile = gzip.open(filename, 'rb')
+    outFile = open(csvName, 'wb')
+    outFile.write(inFile.read())
+    inFile.close()
+    outFile.close()
+    removeFile(archiveName)
 
-
+# "C:\Users\tom.watson\PycharmProjects\AWS Sync\test_dir"
 def parseFile(maximum, pixel):
     nameList = []
     frameList = []
