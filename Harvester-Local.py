@@ -64,35 +64,30 @@ def parseOSName(parsingFrame):
     return parsingFrame
 
 def partitionDataFrame(dataframe, pixel):  # take the dataframe and split it up by OS and Country
+    name_one = pixel + 'AU' + 'Android' + '.csv'
+    name_two = pixel + 'AU' + 'iOS' + '.csv'
+    name_three = pixel + 'NZ' + 'Android' + '.csv'
+    name_four = pixel + 'NZ' + 'iOS' + '.csv'
     frameOne = dataframe.loc[(dataframe['OS'] == 'Android') & (dataframe['Country'] == 'AU')]
     frameTwo = dataframe.loc[(dataframe['OS'] == 'iOS') & (dataframe['Country'] == 'AU')]
     frameThree = dataframe.loc[(dataframe['OS'] == 'Android') & (dataframe['Country'] == 'NZ')]
     frameFour = dataframe.loc[(dataframe['OS'] == 'iOS') & (dataframe['Country'] == 'NZ')]
     # frameCollector = collections.namedtuple('frameCollector', ['Alpha', 'Beta', 'Gamma', 'Delta'])
     # outputFrames = frameCollector(frameOne, frameTwo, frameThree, frameFour)
+    exportDataFrame(name_one, frameOne)
+    exportDataFrame(name_two, frameTwo)
+    exportDataFrame(name_three, frameThree)
+    exportDataFrame(name_four, frameFour)
 
-    return outputFrames
 
+def exportDataFrame(frame_name, dataframe, pixel):
+    frame_path = os.path.join(rootdir, pixel)
+    if dataframe.empty == False:
+        dataframe.to_csv(frame_path, header = False, index = False)
+        print('Dataframe ' + repr(frame_name) + ' written to file')
+    else:
+        print('Dataframe ' + repr(frame_name) + ' was empty. Not written to file')
 
-def exportDataFrame(frameTuple, pixel):
-    name_one = pixel + 'AU' + 'Android' + '.csv'
-    name_two = pixel + 'AU' + 'iOS' + '.csv'
-    name_three = pixel + 'NZ' + 'Android' + '.csv'
-    name_four = pixel + 'NZ' + 'iOS' + '.csv'
-    for df in frameTuple:
-        if df.empty:
-            print('Frame ' + repr(df) + ' in pixel ' + repr(pixel) + ' is empty')
-        else:
-
-    # TODO Put an if statement here to not write out empty data frames
-    frameOne.to_csv(name_one, header=False, index=False)
-    print('frame ' + repr(name_one) + 'written to file')
-    frameTwo.to_csv(name_two, header=False, index=False)
-    print('frame ' + repr(name_two) + 'written to file')
-    frameThree.to_csv(name_three, header=False, index=False)
-    print('frame ' + repr(name_three) + 'written to file')
-    frameFour.to_csv(name_four, header=False, index=False)
-    print('frame ' + repr(name_four) + 'written to file')
 
 
 def pixelExtraction(pixel):
