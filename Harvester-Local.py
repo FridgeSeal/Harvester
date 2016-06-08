@@ -3,7 +3,6 @@ import pandas
 import os
 import re
 import multiprocessing
-import collections
 #import logging
 import config
 
@@ -44,7 +43,6 @@ def processGZ(filename):  # Expand tar.gz file
     outFile.close()
     removeFile(archiveName)
 
-# "C:\Users\tom.watson\PycharmProjects\AWS Sync\test_dir"
 
 def parseCSV(filelist):
     joinedDataFrame = pandas.concat((pandas.read_csv(filename) for filename in filelist))
@@ -73,8 +71,6 @@ def partitionDataFrame(dataframe, pixel):  # take the dataframe and split it up 
     frameTwo = dataframe.loc[(dataframe['OS'] == 'iOS') & (dataframe['Country'] == 'AU')]
     frameThree = dataframe.loc[(dataframe['OS'] == 'Android') & (dataframe['Country'] == 'NZ')]
     frameFour = dataframe.loc[(dataframe['OS'] == 'iOS') & (dataframe['Country'] == 'NZ')]
-    # frameCollector = collections.namedtuple('frameCollector', ['Alpha', 'Beta', 'Gamma', 'Delta'])
-    # outputFrames = frameCollector(frameOne, frameTwo, frameThree, frameFour)
     exportDataFrame(name_one, frameOne)
     exportDataFrame(name_two, frameTwo)
     exportDataFrame(name_three, frameThree)
