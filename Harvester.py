@@ -36,26 +36,21 @@ def walk_directory(pixel):
                 processGZ(file)
 
 
-def downloadTar(key, counter, pixel):  # Download specified object from S3
-    downloadName = namer(pixel, counter, '.gz')
-    PixelBucket.download_file(key, downloadName)
-    print('Downloaded object: ' + repr(key))
-
-
 def removeFile(fileName):  # remove file once we've finished with it
     os.remove(fileName)
     print('Removed file ' + repr(fileName))
 
 
 def processGZ(filename):  # Expand tar.gz file
-    archiveName = namer(pixel, '.gz')
-    csvName = namer(pixel, '.csv')
-    inFile = gzip.open(filename, 'rb')
+    archiveName = filename + '.gz'
+    csvName = filename + '.csv'
+    inFile = gzip.open(archiveName, 'rb')
     outFile = open(csvName, 'wb')
     outFile.write(inFile.read())
     inFile.close()
     outFile.close()
     removeFile(archiveName)
+    parseFile(csvName)
 
 # "C:\Users\tom.watson\PycharmProjects\AWS Sync\test_dir"
 def parseFile(maximum, pixel):
@@ -100,9 +95,6 @@ def partitionDataFrame(dataframe, pixel):  # take the dataframe and split it up 
 
 def pixelExtraction(pixel):
     maximum = getObjects(pixel)
-    print('Got objects for pixel: ' + repr(pixel))
-    processGZ(maximum, pixel)
-    print('Processed objects for pixel: ' + repr(pixel))
     df = parseFile(maximum, pixel)
     for i in range(maximum + 1):
         csvToRemove = namer(pixel, i, '.csv')
