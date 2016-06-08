@@ -45,7 +45,8 @@ def processGZ(filename):  # Expand tar.gz file
 
 
 def parseCSV(filelist):
-    joinedDataFrame = pandas.concat((pandas.read_csv(filename) for filename in filelist))
+    columns = ['OpID', 'Pixel', 'Country', 'OS']
+    joinedDataFrame = pandas.concat((pandas.read_csv(filename, sep = ',', header = None) for filename in filelist))
     # for i in filelist:
     #     tempData = pandas.read_csv(filelist[i], sep=',', header=None)
     #     frameList.append(tempData)
@@ -71,10 +72,10 @@ def partitionDataFrame(dataframe, pixel):  # take the dataframe and split it up 
     frameTwo = dataframe.loc[(dataframe['OS'] == 'iOS') & (dataframe['Country'] == 'AU')]
     frameThree = dataframe.loc[(dataframe['OS'] == 'Android') & (dataframe['Country'] == 'NZ')]
     frameFour = dataframe.loc[(dataframe['OS'] == 'iOS') & (dataframe['Country'] == 'NZ')]
-    exportDataFrame(name_one, frameOne)
-    exportDataFrame(name_two, frameTwo)
-    exportDataFrame(name_three, frameThree)
-    exportDataFrame(name_four, frameFour)
+    exportDataFrame(name_one, frameOne, pixel)
+    exportDataFrame(name_two, frameTwo, pixel)
+    exportDataFrame(name_three, frameThree, pixel)
+    exportDataFrame(name_four, frameFour, pixel)
 
 
 def exportDataFrame(frame_name, dataframe, pixel):
@@ -89,7 +90,9 @@ def exportDataFrame(frame_name, dataframe, pixel):
 
 
 def pixelExtraction(pixel):
-    filelist = walk_directory(pixel)
+    dummylist = walk_directory(pixel)
+    filelist = walk_directory(pixel) # This is really poor programming pls don't judge me
+# TODO re-write that part to be less terrible
     df = parseCSV(filelist)
     for i in filelist:
         removeFile(i)
