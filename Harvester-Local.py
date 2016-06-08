@@ -7,15 +7,14 @@ import collections
 #import logging
 import config
 
-global root_directory = 'C:\\Users\\tom.watson\\PycharmProjects\\AWS Sync'
-
 
 def namer(pixel, extension):
     name = pixel + extension
     return name
 
 def join_dir(pixel):
-    filepath = os.path.join(root_directory, pixel)
+    rootdir = 'C:\\Users\\tom.watson\\PycharmProjects\\AWS Sync'
+    filepath = os.path.join(rootdir, pixel)
     return filepath
 
 
