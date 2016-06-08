@@ -3,6 +3,7 @@ import pandas
 import os
 import re
 import multiprocessing
+import collections
 #import logging
 import config
 
@@ -18,11 +19,14 @@ def join_dir(pixel):
 
 def walk_directory(pixel):
     rootdir = join_dir(pixel)
+    filelist = []
     for subdir, dirs, files in os.walk(rootdir):
         for file in files:
             if file.endswith('.gz'):
                 processGZ(file)
-
+            elif file.endswith('.csv'):
+                filelist.append(os.path.join(rootdir, file))
+    return filelist
 
 def removeFile(fileName):  # remove file once we've finished with it
     os.remove(fileName)
@@ -38,17 +42,15 @@ def processGZ(filename):  # Expand tar.gz file
     inFile.close()
     outFile.close()
     removeFile(archiveName)
-    parseFile(csvName)
 
 # "C:\Users\tom.watson\PycharmProjects\AWS Sync\test_dir"
-def parseFile(maximum, pixel):
-    nameList = []
-    frameList = []
-    for i in range(maximum + 1):
-        nameList.append(namer(pixel, i, '.csv'))
-        tempData = pandas.read_csv(nameList[i], sep=',', header=None)
-        frameList.append(tempData)
-    joinedDataFrame = pandas.concat(frameList)
+
+def parseCSV(filelist):
+    joinedDataFrame = pandas.concat((pandas.read_csv(filename) for filename in filelist))
+    # for i in filelist:
+    #     tempData = pandas.read_csv(filelist[i], sep=',', header=None)
+    #     frameList.append(tempData)
+    # joinedDataFrame = pandas.concat(frameList)
     joinedDataFrame = joinedDataFrame.iloc[:, [0, 3, 8, 12]]
     joinedDataFrame.columns = columns
     return joinedDataFrame
@@ -62,14 +64,26 @@ def parseOSName(parsingFrame):
     return parsingFrame
 
 def partitionDataFrame(dataframe, pixel):  # take the dataframe and split it up by OS and Country
-    name_one = pixel + 'AU' + 'Android' + '.csv'
-    name_two = pixel + 'AU' + 'iOS' + '.csv'
-    name_three = pixel + 'NZ' + 'Android' + '.csv'
-    name_four = pixel + 'NZ' + 'iOS' + '.csv'
     frameOne = dataframe.loc[(dataframe['OS'] == 'Android') & (dataframe['Country'] == 'AU')]
     frameTwo = dataframe.loc[(dataframe['OS'] == 'iOS') & (dataframe['Country'] == 'AU')]
     frameThree = dataframe.loc[(dataframe['OS'] == 'Android') & (dataframe['Country'] == 'NZ')]
     frameFour = dataframe.loc[(dataframe['OS'] == 'iOS') & (dataframe['Country'] == 'NZ')]
+    # frameCollector = collections.namedtuple('frameCollector', ['Alpha', 'Beta', 'Gamma', 'Delta'])
+    # outputFrames = frameCollector(frameOne, frameTwo, frameThree, frameFour)
+
+    return outputFrames
+
+
+def exportDataFrame(frameTuple, pixel):
+    name_one = pixel + 'AU' + 'Android' + '.csv'
+    name_two = pixel + 'AU' + 'iOS' + '.csv'
+    name_three = pixel + 'NZ' + 'Android' + '.csv'
+    name_four = pixel + 'NZ' + 'iOS' + '.csv'
+    for df in frameTuple:
+        if df.empty:
+            print('Frame ' + repr(df) + ' in pixel ' + repr(pixel) + ' is empty')
+        else:
+
     # TODO Put an if statement here to not write out empty data frames
     frameOne.to_csv(name_one, header=False, index=False)
     print('frame ' + repr(name_one) + 'written to file')
@@ -82,11 +96,10 @@ def partitionDataFrame(dataframe, pixel):  # take the dataframe and split it up 
 
 
 def pixelExtraction(pixel):
-    maximum = getObjects(pixel)
-    df = parseFile(maximum, pixel)
-    for i in range(maximum + 1):
-        csvToRemove = namer(pixel, i, '.csv')
-        removeFile(csvToRemove)
+    filelist = walk_directory(pixel)
+    df = parseCSV(filelist)
+    for i in filelist:
+        removeFile(i)
     df = parseOSName(df)
     partitionDataFrame(df, pixel)
     # TODO Use method of a getName() setName() function to reference pixel name instead of passing it everywhere
