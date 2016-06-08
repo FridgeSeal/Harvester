@@ -7,13 +7,15 @@ import collections
 #import logging
 import config
 
+global root_directory = 'C:\\Users\\tom.watson\\PycharmProjects\\AWS Sync'
+
 
 def namer(pixel, extension):
     name = pixel + extension
     return name
 
 def join_dir(pixel):
-    filepath = 'C\\Users\\tom.watson\\PycharmProjects\\AWS Sync\\' + pixel
+    filepath = os.path.join(root_directory, pixel)
     return filepath
 
 
@@ -81,7 +83,8 @@ def partitionDataFrame(dataframe, pixel):  # take the dataframe and split it up 
 
 
 def exportDataFrame(frame_name, dataframe, pixel):
-    frame_path = os.path.join(rootdir, pixel)
+    frame_path = join_dir(pixel)
+    frame_path = os.path.join(frame_path, frame_name)
     if dataframe.empty == False:
         dataframe.to_csv(frame_path, header = False, index = False)
         print('Dataframe ' + repr(frame_name) + ' written to file')
