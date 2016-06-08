@@ -3,7 +3,6 @@ import pandas
 import os
 import re
 import multiprocessing
-#import logging
 import config
 
 
@@ -91,7 +90,7 @@ def exportDataFrame(frame_name, dataframe, pixel):
 
 def pixelExtraction(pixel):
     dummylist = walk_directory(pixel)
-    filelist = walk_directory(pixel) # This is really poor programming pls don't judge me
+    filelist = walk_directory(pixel) # This is really poor programming pls don't judge me, it'll be changed v soon
 # TODO re-write that part to be less terrible
     df = parseCSV(filelist)
     for i in filelist:
