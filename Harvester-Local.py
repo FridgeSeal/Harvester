@@ -82,7 +82,7 @@ def exportDataFrame(frame_name, dataframe, pixel):
     frame_path = join_dir(pixel)
     frame_path = os.path.join(frame_path, frame_name)
     if not dataframe.empty:
-        dataframe[['OS']].to_csv(frame_path, header=False, index=False)
+        dataframe[['OpID']].to_csv(frame_path, header=False, index=False)
         print('Dataframe ' + repr(frame_name) + ' written to file')
     else:
         print('Dataframe ' + repr(frame_name) + ' was empty. Not written to file')
