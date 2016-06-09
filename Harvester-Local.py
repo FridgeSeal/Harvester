@@ -30,7 +30,6 @@ def walk_directory(pixel):
 
 def removeFile(fileName):  # remove file once we've finished with it
     os.remove(fileName)
-    print('Removed file ' + repr(fileName))
 
 
 def processGZ(filename, dir):  # Expand tar.gz file
@@ -87,12 +86,17 @@ def exportDataFrame(frame_name, dataframe, pixel):
 def pixelExtraction(pixel):
     # noinspection PyUnusedLocal
     dummylist = walk_directory(pixel)
+    print('.gz files unpacked')
     filelist = walk_directory(pixel)  # This is really poor programming pls don't judge me, it'll be changed v soon
+    print('.csv files captured')
     # TODO re-write that part to be less terrible
     df = parseCSV(filelist)
+    print('dfs merged')
     for i in filelist:
         removeFile(i)
+    print('.csv files removed')
     df = parseOSName(df)
+
     partitionDataFrame(df, pixel)
     # TODO Use method of a getName() setName() function to reference pixel name instead of passing it everywhere
 
