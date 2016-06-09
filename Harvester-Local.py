@@ -22,9 +22,9 @@ def walk_directory(pixel):
     for dir, subdirs, files in os.walk(rootdir):
         for file in files:
             if file.endswith('.gz'):
-                processGZ(filem dir)
+                processGZ(file, dir)
             elif file.endswith('.csv'):
-                filelist.append(os.path.join(rootdir, file))
+                filelist.append(os.path.join(dir, file))
     return filelist
 
 
@@ -40,8 +40,7 @@ def processGZ(filename, dir):  # Expand tar.gz file
     outFile.write(inFile.read())
     inFile.close()
     outFile.close()
-    removeFile(filename)
-    removeFile(filename)
+    # removeFile(filename)
 
 
 def parseCSV(filelist):
