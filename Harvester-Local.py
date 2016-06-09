@@ -10,9 +10,9 @@ def namer(pixel, extension):
     name = pixel + extension
     return name
 
+
 def join_dir(pixel):
-    rootdir = 'C:\\Users\\tom.watson\\PycharmProjects\\AWS Sync'
-    filepath = os.path.join(rootdir, pixel)
+    filepath = os.path.join(config.root_dir, pixel)
     return filepath
 
 
@@ -26,6 +26,7 @@ def walk_directory(pixel):
             elif file.endswith('.csv'):
                 filelist.append(os.path.join(rootdir, file))
     return filelist
+
 
 def removeFile(fileName):  # remove file once we've finished with it
     os.remove(fileName)
@@ -45,7 +46,7 @@ def processGZ(filename):  # Expand tar.gz file
 
 def parseCSV(filelist):
     columns = ['OpID', 'Pixel', 'Country', 'OS']
-    joinedDataFrame = pandas.concat((pandas.read_csv(filename, sep = ',', header = None) for filename in filelist))
+    joinedDataFrame = pandas.concat((pandas.read_csv(filename, sep = ',', header=None) for filename in filelist))
     # for i in filelist:
     #     tempData = pandas.read_csv(filelist[i], sep=',', header=None)
     #     frameList.append(tempData)
@@ -61,6 +62,7 @@ def parseOSName(parsingFrame):
         parsingFrame.iloc[row, 3] = re.sub('iPhone OS', 'iOS', parsingFrame.iloc[row, 3])
     print('Dataframe parsed')
     return parsingFrame
+
 
 def partitionDataFrame(dataframe, pixel):  # take the dataframe and split it up by OS and Country
     name_one = pixel + 'AU' + 'Android' + '.csv'
@@ -80,18 +82,18 @@ def partitionDataFrame(dataframe, pixel):  # take the dataframe and split it up 
 def exportDataFrame(frame_name, dataframe, pixel):
     frame_path = join_dir(pixel)
     frame_path = os.path.join(frame_path, frame_name)
-    if dataframe.empty == False:
-        dataframe.to_csv(frame_path, header = False, index = False)
+    if not dataframe.empty:
+        dataframe.to_csv(frame_path, header=False, index=False)
         print('Dataframe ' + repr(frame_name) + ' written to file')
     else:
         print('Dataframe ' + repr(frame_name) + ' was empty. Not written to file')
 
 
-
 def pixelExtraction(pixel):
+    # noinspection PyUnusedLocal
     dummylist = walk_directory(pixel)
-    filelist = walk_directory(pixel) # This is really poor programming pls don't judge me, it'll be changed v soon
-# TODO re-write that part to be less terrible
+    filelist = walk_directory(pixel)  # This is really poor programming pls don't judge me, it'll be changed v soon
+    # TODO re-write that part to be less terrible
     df = parseCSV(filelist)
     for i in filelist:
         removeFile(i)
@@ -103,4 +105,4 @@ def pixelExtraction(pixel):
 if __name__ == '__main__':
     print('Starting parallelisation')
     pool = multiprocessing.Pool(4)
-    pool.map(pixelExtraction, config.pixel_list_A)
+    pool.map(pixelExtraction, config.pixel_list)
