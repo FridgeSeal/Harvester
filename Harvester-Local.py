@@ -46,10 +46,6 @@ def processGZ(filename, dir):  # Expand tar.gz file
 def parseCSV(filelist):
     columns = ['OpID', 'Pixel', 'Country', 'OS']
     joinedDataFrame = pandas.concat((pandas.read_csv(filename, sep = ',', header=None) for filename in filelist))
-    # for i in filelist:
-    #     tempData = pandas.read_csv(filelist[i], sep=',', header=None)
-    #     frameList.append(tempData)
-    # joinedDataFrame = pandas.concat(frameList)
     joinedDataFrame = joinedDataFrame.iloc[:, [0, 3, 8, 12]]
     joinedDataFrame.columns = columns
     return joinedDataFrame
