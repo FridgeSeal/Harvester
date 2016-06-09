@@ -2,7 +2,7 @@ import gzip
 import pandas
 import os
 import re
-import multiprocessing
+# import multiprocessing
 import config
 
 
@@ -19,10 +19,10 @@ def join_dir(pixel):
 def walk_directory(pixel):
     rootdir = join_dir(pixel)
     filelist = []
-    for subdir, dirs, files in os.walk(rootdir):
+    for dir, subdirs, files in os.walk(rootdir):
         for file in files:
             if file.endswith('.gz'):
-                processGZ(file)
+                processGZ(filem dir)
             elif file.endswith('.csv'):
                 filelist.append(os.path.join(rootdir, file))
     return filelist
@@ -33,15 +33,15 @@ def removeFile(fileName):  # remove file once we've finished with it
     print('Removed file ' + repr(fileName))
 
 
-def processGZ(filename):  # Expand tar.gz file
-    archiveName = filename + '.gz'
-    csvName = filename + '.csv'
-    inFile = gzip.open(archiveName, 'rb')
-    outFile = open(csvName, 'wb')
+def processGZ(filename, dir):  # Expand tar.gz file
+    csvName = filename[:-3] + '.csv'
+    inFile = gzip.open(os.path.join(dir, filename), 'rb')
+    outFile = open(os.path.join(dir, csvName), 'wb')
     outFile.write(inFile.read())
     inFile.close()
     outFile.close()
-    removeFile(archiveName)
+    removeFile(filename)
+    removeFile(filename)
 
 
 def parseCSV(filelist):
@@ -102,7 +102,9 @@ def pixelExtraction(pixel):
     # TODO Use method of a getName() setName() function to reference pixel name instead of passing it everywhere
 
 
-if __name__ == '__main__':
-    print('Starting parallelisation')
-    pool = multiprocessing.Pool(4)
-    pool.map(pixelExtraction, config.pixel_list)
+# if __name__ == '__main__':
+#     print('Starting parallelisation')
+#     pool = multiprocessing.Pool(4)
+#     pool.map(pixelExtraction, config.test_list)
+
+pixelExtraction(config.test_list)
