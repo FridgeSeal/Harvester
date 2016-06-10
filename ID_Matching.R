@@ -11,3 +11,6 @@ id_Data = id_Data[!((id_Data[['AAID']] == 'null') & (id_Data[['IDFA']] == 'null'
 matched_pairs = as.data.frame(sapply(target_Pairs, match, id_Data[['OpID']]))
 colnames(matched_pairs) = c('row_num') 
 matched_pairs = id_Data[c(matched_pairs[['row_num']])]
+size.original = as.data.frame(dim(id_Data))
+size.matched = as.data.frame(dim(matched_pairs))
+percent.matched = (size.matched[1]/size.original[1])*100
