@@ -58,19 +58,29 @@ def parseOSName(parsingFrame):
     return parsingFrame
 
 
-def partitionDataFrame(dataframe, pixel):  # take the dataframe and split it up by OS and Country
-    name_one = pixel + 'AU' + 'Android' + '.csv'
-    name_two = pixel + 'AU' + 'iOS' + '.csv'
-    name_three = pixel + 'NZ' + 'Android' + '.csv'
-    name_four = pixel + 'NZ' + 'iOS' + '.csv'
-    frameOne = dataframe.loc[(dataframe['OS'] == 'Android') & (dataframe['Country'] == 'AU')]
-    frameTwo = dataframe.loc[(dataframe['OS'] == 'iOS') & (dataframe['Country'] == 'AU')]
-    frameThree = dataframe.loc[(dataframe['OS'] == 'Android') & (dataframe['Country'] == 'NZ')]
-    frameFour = dataframe.loc[(dataframe['OS'] == 'iOS') & (dataframe['Country'] == 'NZ')]
-    exportDataFrame(name_one, frameOne, pixel)
-    exportDataFrame(name_two, frameTwo, pixel)
-    exportDataFrame(name_three, frameThree, pixel)
-    exportDataFrame(name_four, frameFour, pixel)
+def partitionDataFrame(dataframe, pixel, flag):  # take the dataframe and split it up by OS and Country
+    if flag == 'granular'
+        name_one = pixel + 'AU' + 'Android' + '.csv'
+        name_two = pixel + 'AU' + 'iOS' + '.csv'
+        name_three = pixel + 'NZ' + 'Android' + '.csv'
+        name_four = pixel + 'NZ' + 'iOS' + '.csv'
+        frameOne = dataframe.loc[(dataframe['OS'] == 'Android') & (dataframe['Country'] == 'AU')]
+        frameTwo = dataframe.loc[(dataframe['OS'] == 'iOS') & (dataframe['Country'] == 'AU')]
+        frameThree = dataframe.loc[(dataframe['OS'] == 'Android') & (dataframe['Country'] == 'NZ')]
+        frameFour = dataframe.loc[(dataframe['OS'] == 'iOS') & (dataframe['Country'] == 'NZ')]
+        exportDataFrame(name_one, frameOne, pixel)
+        exportDataFrame(name_two, frameTwo, pixel)
+        exportDataFrame(name_three, frameThree, pixel)
+        exportDataFrame(name_four, frameFour, pixel)
+    elif flag == 'aggregated':
+        name_one = pixel + 'AU' + '.csv'
+        name_two = pixel + 'NZ' + '.csv'
+        frameOne = dataframe.loc[((dataframe['OS'] == 'Android') | (dataframe['OS'] == 'iOS')) & (dataframe['Country'] == 'AU')]
+        frameTwo = dataframe.loc[((dataframe['OS'] == 'Android') | (dataframe['OS'] == 'iOS')) & (dataframe['Country'] == 'NZ')]
+        exportDataFrame(name_one, frameOne, pixel)
+        exportDataFrame(name_two, frameTwo, pixel)
+    else:
+        print('Error: Flag not recognised')
 
 
 def exportDataFrame(frame_name, dataframe, pixel):
@@ -96,8 +106,7 @@ def pixelExtraction(pixel):
         removeFile(i)
     print('.csv files removed')
     df = parseOSName(df)
-
-    partitionDataFrame(df, pixel)
+    partitionDataFrame(df, pixel, 'aggregated')
     # TODO Use method of a getName() setName() function to reference pixel name instead of passing it everywhere
 
 
@@ -109,3 +118,4 @@ def pixelExtraction(pixel):
 if __name__ == '__main__':
     for pixel in config.pixel_list:
         pixelExtraction(pixel)
+    print('Process Complete')
