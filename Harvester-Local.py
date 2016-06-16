@@ -59,7 +59,7 @@ def parseOSName(parsingFrame):
 
 
 def partitionDataFrame(dataframe, pixel, flag):  # take the dataframe and split it up by OS and Country
-    if flag == 'granular'
+    if flag == 'granular':
         name_one = pixel + 'AU' + 'Android' + '.csv'
         name_two = pixel + 'AU' + 'iOS' + '.csv'
         name_three = pixel + 'NZ' + 'Android' + '.csv'
