@@ -10,6 +10,8 @@ colnames(id_Data) = c('track.IDFA', 'OpID', 'AAID', 'IDFA', 'track.AAID')
 id_Data = id_Data[!((id_Data[['AAID']] == 'null') & (id_Data[['IDFA']] == 'null')) & (((id_Data[['IDFA']] != 'null') & ((id_Data[['track.IDFA']] == 'YES') | (id_Data[['track.IDFA']] == 'yes'))) | ((id_Data[['AAID']] != 'null') & ((id_Data[['track.AAID']] == 'null') | (id_Data[['track.AAID']] == 0))))] # It's a single monster line of code
 # But in one line it filters out: opID's from Mweb (both idfa and aaid missing)
 # idfa's and aaid's with tracking turned off or opted out. :)
+# nulls are included because they are the result of some error/missing data and the list they are matched with
+# Only has ID's where tracking is enabled, so tracking disabled ID's will get filtered out anyway.
 matched_pairs = as.data.frame(sapply(target_Pairs[['ID']], match, id_Data[['OpID']]))
 colnames(matched_pairs) = c('row_num')
 matched_pairs = id_Data[c(matched_pairs[['row_num']]),]
