@@ -106,4 +106,6 @@ def pixelExtraction(pixel):
 #     pool = multiprocessing.Pool(4)
 #     pool.map(pixelExtraction, config.test_list)
 
-pixelExtraction(config.test_list)
+if __name__ == '__main__':
+    for pixel in config.pixel_list:
+        pixelExtraction(pixel)
