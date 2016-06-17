@@ -25,3 +25,5 @@ size.matched = as.data.frame(dim(matched_pairs))
 percent.matched = (size.matched[1]/size.original[1])*100
 write.table(matched_pairs.IDFA, file = 'Matched_IDFA.csv', sep = ',', quote = FALSE, row.names = FALSE, col.names = FALSE)
 write.table(matched_pairs.AAID, file = 'Matched_AAID.csv', quote = FALSE, sep = ',', row.names = FALSE, col.names = FALSE)
+# TODO turn a lot of this into a function that can be called
+# so that we can call it from Python and pass in the csv names to export so we can ultimately have one script that just does everything else
