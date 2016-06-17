@@ -23,5 +23,5 @@ matched_pairs.AAID = unique(matched_pairs.AAID[['AAID']])
 size.original = as.data.frame(dim(id_Data))
 size.matched = as.data.frame(dim(matched_pairs))
 percent.matched = (size.matched[1]/size.original[1])*100
-write.table(matched_pairs.IDFA, file = 'Matched_IDFA.csv', quote = FALSE, header = FALSE, rownames = FALSE)
-write.table(matched_pairs.AAID, file = 'Matched_AAID.csv', quote = FALSE, header = FALSE, rownames = FALSE)
+write.table(matched_pairs.IDFA, file = 'Matched_IDFA.csv', sep = ',', quote = FALSE, row.names = FALSE, col.names = FALSE)
+write.table(matched_pairs.AAID, file = 'Matched_AAID.csv', quote = FALSE, sep = ',', row.names = FALSE, col.names = FALSE)
