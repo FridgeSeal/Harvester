@@ -16,6 +16,12 @@ matched_pairs = as.data.frame(sapply(target_Pairs[['ID']], match, id_Data[['OpID
 colnames(matched_pairs) = c('row_num')
 matched_pairs = id_Data[c(matched_pairs[['row_num']]),]
 matched_pairs = unique(matched_pairs[!is.na(matched_pairs[['OpID']]),])
+matched_pairs.IDFA = matched_pairs[matched_pairs[['IDFA']] != 'null',]
+matched_pairs.IDFA = unique(matched_pairs.IDFA[['IDFA']])
+matched_pairs.AAID = matched_pairs[matched_pairs[['AAID']] != 'null',]
+matched_pairs.AAID = unique(matched_pairs.AAID[['AAID']])
 size.original = as.data.frame(dim(id_Data))
 size.matched = as.data.frame(dim(matched_pairs))
 percent.matched = (size.matched[1]/size.original[1])*100
+write.table(matched_pairs.IDFA, file = 'Matched_IDFA.csv', quote = FALSE, header = FALSE, rownames = FALSE)
+write.table(matched_pairs.AAID, file = 'Matched_AAID.csv', quote = FALSE, header = FALSE, rownames = FALSE)
