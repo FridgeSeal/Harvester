@@ -2,17 +2,23 @@ import gzip
 import pandas
 import os
 import re
+import logging
 # import multiprocessing
 import config
+
+logging.basicConfig(filename = 'local.log', filemode = 'w', level = logging.INFO, format = '%(asctime)s %(message)s')
+logger = logging.getLogger(__name__)
 
 
 def namer(pixel, extension):
     name = pixel + extension
+    logger.info('File named: %s', name)
     return name
 
 
 def join_dir(pixel):
     filepath = os.path.join(config.root_dir, pixel)
+    logger.info('Filepath constructed: %s', filepath)
     return filepath
 
 
@@ -22,14 +28,17 @@ def walk_directory(pixel):
     for dir, subdirs, files in os.walk(rootdir):
         for file in files:
             if file.endswith('.gz'):
+                logger.debug('About to unpack: %s', file)
                 processGZ(file, dir)
             elif file.endswith('.csv'):
+                logger.debug('About to append .csv: %s', file)
                 filelist.append(os.path.join(dir, file))
     return filelist
 
 
 def removeFile(fileName):  # remove file once we've finished with it
     os.remove(fileName)
+    logger.debug('Removed file: %s', fileName)
 
 
 def processGZ(filename, dir):  # Expand tar.gz file
@@ -39,13 +48,16 @@ def processGZ(filename, dir):  # Expand tar.gz file
     outFile.write(inFile.read())
     inFile.close()
     outFile.close()
+    logger.info('.gz unpacked: %s', filename)
     # removeFile(filename)
 
 
 def parseCSV(filelist):
     columns = ['OpID', 'Pixel', 'Country', 'OS']
-    joinedDataFrame = pandas.concat((pandas.read_csv(filename, sep = ',', header=None) for filename in filelist))
+    joinedDataFrame = pandas.concat((pandas.read_csv(filename, sep = ',', header=None, encoding = 'ISO-8859-1') for filename in filelist))
+    logger.info('Dataframe joined')
     joinedDataFrame = joinedDataFrame.iloc[:, [0, 3, 8, 12]]
+    logger.info('Columns removed')
     joinedDataFrame.columns = columns
     return joinedDataFrame
 
@@ -84,13 +96,19 @@ def partitionDataFrame(dataframe, pixel, flag):  # take the dataframe and split 
 
 
 def exportDataFrame(frame_name, dataframe, pixel):
-    frame_path = join_dir(pixel)
-    frame_path = os.path.join(frame_path, frame_name)
+    # frame_path = join_dir(pixel)
+    # frame_path = os.path.join(frame_path, frame_name)
+    if not os.path.exists(os.path.join(os.getcwd(), 'data output')):
+        export_path = os.path.join(os.getcwd(), 'data output')
+        os.makedirs(export_path)
+    frame_path = os.path.join(export_path, frame_name)
     if not dataframe.empty:
         dataframe[['OpID']].to_csv(frame_path, header=False, index=False)
         print('Dataframe ' + repr(frame_name) + ' written to file')
+        logger.info('Dataframe %s written to file', frame_name)
     else:
         print('Dataframe ' + repr(frame_name) + ' was empty. Not written to file')
+        logger.info('Dataframe %s was empty, not written to file', frame_name)
 
 
 def pixelExtraction(pixel):
