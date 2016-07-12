@@ -96,13 +96,6 @@ def partitionDataFrame(dataframe, pixel, flag):  # take the dataframe and split 
 
 
 def exportDataFrame(frame_name, dataframe, pixel):
-    # frame_path = join_dir(pixel)
-    # frame_path = os.path.join(frame_path, frame_name)
-    export_path = ''
-    if not os.path.exists(os.path.join(os.getcwd(), 'data output')):
-        export_path = os.path.join(os.getcwd(), 'data output')
-        os.makedirs(export_path)
-        logger.info('data output directory created')
     frame_path = os.path.join(export_path, frame_name)
     if not dataframe.empty:
         dataframe[['OpID']].to_csv(frame_path, header=False, index=False)
@@ -112,6 +105,13 @@ def exportDataFrame(frame_name, dataframe, pixel):
         print('Dataframe ' + repr(frame_name) + ' was empty. Not written to file')
         logger.info('Dataframe %s was empty, not written to file', frame_name)
 
+    # frame_path = join_dir(pixel)
+    # frame_path = os.path.join(frame_path, frame_name)
+    export_path = ''
+    if not os.path.exists(os.path.join(os.getcwd(), 'data output')):
+        export_path = os.path.join(os.getcwd(), 'data output')
+        os.makedirs(export_path)
+        logger.info('data output directory created')
 
 def pixelExtraction(pixel):
     # noinspection PyUnusedLocal
